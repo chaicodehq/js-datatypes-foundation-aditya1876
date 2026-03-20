@@ -53,7 +53,7 @@
  *   // => "RAJASTHANI THALI (Veg) - Items: dal - Rs.250.00"
  */
 export function createThaliDescription(thali) {
-  if (!(typeof thali==='object') || Array.isArray(thali)) return ""
+  if (!(typeof thali==='object')|| Array.isArray(thali)) return ""
 
   if (!Object.hasOwn(thali, "name") || thali.name==null || thali.name===undefined ||thali.name==""|| thali.price==null || thali.price===undefined || thali.isVeg===undefined || thali.isVeg==null) return ""
 
@@ -76,12 +76,12 @@ export function getThaliStats(thalis) {
 }
 
 export function searchThaliMenu(thalis, query) {
-  if(!(typeof thalis==='object') || Array.isArray(thalis) || !query || query=="" || query.length<1) return [];
+  if(!Array.isArray(thalis) || !(typeof query==='string') || !query || query=="" || query.length<1) return [];
 
-  let filterByNames = thalis.filter(t => t.name.toLowerCase().includes(query.toLowerCase()));
   let queryLower = query.toLowerCase();
+  let filterByNames = thalis.filter(t => t.name.toLowerCase().includes(queryLower));
   let filteredItems = thalis.filter((t, queryLower)=> {
-    let result = t.items.filter(i=>i.toLowerCase().includes(query));
+    let result = t.items.filter(i=>i.toLowerCase().includes(queryLower));
     if (result.length>0){
       return t
     }
