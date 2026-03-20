@@ -53,15 +53,29 @@
  *   // => "RAJASTHANI THALI (Veg) - Items: dal - Rs.250.00"
  */
 export function createThaliDescription(thali) {
-  // Your code here
+  if (!(typeof thali==='object') || Array.isArray(thali)) return ""
+
+  if (!Object.hasOwn(thali, "name") || thali.name==null || thali.name===undefined ||thali.name==""|| thali.price==null || thali.price===undefined || thali.isVeg===undefined || thali.isVeg==null) return ""
+
+  return `${thali.name.toUpperCase()} (${thali.isVeg? "Veg": "Non-Veg"}) - Items: ${thali.items.join(", ")} - Rs.${thali.price.toFixed(2)}`
 }
 
 export function getThaliStats(thalis) {
-  // Your code here
+  if (!(typeof thalis==='object') || Array.isArray(thalis) || thalis.lenght()<1) return null
+  let totalThalis = thalis.lenght;
+  let vegCount = thalis.filter(t=> t.isVeg==true).length;
+  let nonVegCount = thalis.filter(t=>t.isVeg==false).length;
+  let avgPrice = thalis.reduce((price, data) => price = price+data.price);
+  let prices = thalis.map(t = t.prices);
+  let cheapest = Math.min(prices);
+  let costliest = Math.max(prices);
+  let names = thalis.map(t => t.names);
+
+  return {totalThalis: totalThalis, vegCount:vegCount, nonVegCount: nonVegCount, avgPrice: avgPrice.toFixed(2), cheapest:cheapest, costliest:costliest, names: names}
 }
 
 export function searchThaliMenu(thalis, query) {
-  // Your code here
+  
 }
 
 export function generateThaliReceipt(customerName, thalis) {
