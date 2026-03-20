@@ -61,23 +61,46 @@ export function createThaliDescription(thali) {
 }
 
 export function getThaliStats(thalis) {
-  if (!(typeof thalis==='object') || Array.isArray(thalis) || thalis.lenght()<1) return null
-  let totalThalis = thalis.lenght;
+  if (!Array.isArray(thalis) || thalis.length<1) return null
+  let totalThalis = thalis.length;
   let vegCount = thalis.filter(t=> t.isVeg==true).length;
   let nonVegCount = thalis.filter(t=>t.isVeg==false).length;
-  let avgPrice = thalis.reduce((price, data) => price = price+data.price);
-  let prices = thalis.map(t = t.prices);
-  let cheapest = Math.min(prices);
-  let costliest = Math.max(prices);
-  let names = thalis.map(t => t.names);
+  let totalPrice = thalis.reduce((price, data) => price = price+data.price,0);
+  let avgPrice = totalPrice/totalThalis;
+  let prices = thalis.map(t => t.price);
+  let cheapest = Math.min(...prices);
+  let costliest = Math.max(...prices);
+  let names = thalis.map(t => t.name);
 
-  return {totalThalis: totalThalis, vegCount:vegCount, nonVegCount: nonVegCount, avgPrice: avgPrice.toFixed(2), cheapest:cheapest, costliest:costliest, names: names}
+  return {"totalThalis": totalThalis, vegCount:vegCount, nonVegCount: nonVegCount, avgPrice: avgPrice.toFixed(2), cheapest:cheapest, costliest:costliest, names: names}
 }
 
 export function searchThaliMenu(thalis, query) {
-  
+  if(!(typeof thalis==='object') || Array.isArray(thalis) || !query || query=="" || query.length<1) return [];
+
+  let filterByNames = thalis.filter(t => t.name.toLowerCase().includes(query.toLowerCase()));
+  let queryLower = query.toLowerCase();
+  let filteredItems = thalis.filter((t, queryLower)=> {
+    let result = t.items.filter(i=>i.toLowerCase().includes(query));
+    if (result.length>0){
+      return t
+    }
+  })
+
+  let final = [...filterByNames, ...filteredItems]
+  return final
 }
 
 export function generateThaliReceipt(customerName, thalis) {
-  // Your code here
+  if (!Array.isArray(thalis) || thalis.length<1 ||  !customerName || !(typeof customerName==='string') || customerName=="") return ""
+  let lineItems = ""
+  let totalPrice = 0;
+  for (const thali of thalis){
+    lineItems = lineItems  + `- ${thali.name} x Rs.${thali.price}`;
+    totalPrice = totalPrice + thali.price;
+  }
+
+  return `THALI RECEIPT\n---\nCustomer: ${customerName.toUpperCase()}\n${lineItems}\n---\nTotal: Rs.${totalPrice}\nItems: ${thalis.length}`
+
+
 }
